@@ -1,41 +1,64 @@
 # Olympus Card-Jitsu
 
-## Olympus Card-Jitsu
-[Olympus Card-Jitsu](https://jzhou45.github.io/Olympus-Card-Jitsu/) combines an agglomeration of favorite things from my childhood, including Club Penguin, ninjas (which inspired the original Card-Jitsu), and Greek myths and the Percy Jackson series.
+**[Play Olympus Card-Jitsu](https://jzhou45.github.io/Olympus-Card-Jitsu/)**
 
-Olympus Card-Jitsu aims to make a faithful adaptation to the core Card-Jitsu gameplay with new classes and cards based on Greek mythology and lore. In order to keep the game a client-side project, the opponent will be a simple A.I., rather than an opposing player.
+Olympus Card-Jitsu is a browser card game that brings together a few favorite things from my childhood: Club Penguin's Card-Jitsu, Greek mythology, and the Percy Jackson series. It adapts Card-Jitsu's core gameplay with new card types and 36 cards drawn from Greek mythology, and you play against a computer opponent.
 
-## Background
+I built it solo in vanilla JavaScript in about a week in July 2022, as my JavaScript project at App Academy. It runs entirely in the browser and is hosted on GitHub Pages.
 
-### Club Penguin Card-Jitsu
-Card-Jitsu is a mini-game that was first introduced in the formerly popular MMORPG, Club Penguin, in November of 2008, with the introduction of ninjas and the Dojo to servers. The card game follows a simple gameplay premise, where players would have decks with cards of three different types, that follow the classic Rock-Paper-Scissors structure, where 1 type would beat another, but lose to the other. The cards would also contain a number value and color associated with it for additional gameplay mechanics, along with cards with special effect that changes the rules of the round it's played in.
+![Olympus Card-Jitsu gameplay](./ocj_gameplay.gif)
 
-Each round of Card-Jitsu, would require each player to play 1 card at the same time. The player with the strong type would win the round, e.g. Water beats Fire in Card-Jitsu or Rock beats Scissors in Rock-Paper-Scissors. If both cards are of the same element, the card with the higher number value would win, otherwise the round will end in a tie.
+## How to Play
 
-After each round ends, the player would collect a token with the type and color of the card they won with. In order to win the game, a player would need to collect 3 tokens are different types or 3 tokens of the same type with different colors.
+Each round, you and the computer each play one card at the same time.
+
+- **Types:** every card is a God, a Hero, or a Monster, and each type beats one other type:
+  - **Gods** beat Heroes.
+  - **Heroes** beat Monsters.
+  - **Monsters** beat Gods.
+- **Same type:** if both cards are the same type, the higher number wins. Equal numbers tie.
+- **Winning a round:** the winner collects a token matching their card's type and color.
+- **Winning the game:** collect three tokens of the same type in three different colors, or one token of each type in three different colors.
+- **Timer:** you have 20 seconds to choose a card. If time runs out, your first card is played for you.
+
+You hold five cards and draw a new one after each round. The deck has 36 cards: 3 types, 4 colors, and 3 cards of each type in each color.
+
+## Background: Club Penguin's Card-Jitsu
+
+Card-Jitsu is a card game that Club Penguin, a popular online game, introduced in November 2008 along with ninjas and the Dojo. Each card has one of three elements, Fire, Water, or Snow, which beat each other in a rock-paper-scissors cycle. Cards also have a number and a color, and some have special effects that change the rules for a round.
+
+Olympus Card-Jitsu keeps the core rules, including the elements, numbers, colors, and tokens. It replaces the elements with Gods, Heroes, and Monsters, and it doesn't include special-effect cards.
+
+## Features
+
+- A title screen and illustrated instructions, which can be reopened during a game.
+- A shuffled deck for every game, for both you and the computer.
+- Cards lift and show their name when you hover over them.
+- A 20-second timer that plays a card for you if you don't choose one.
+- Token displays that show both players' progress toward winning.
+- Background music with a play and pause button, and a gong sound effect.
+- A win or loss screen with an option to play again.
+
+The computer opponent plays the top card of its own shuffled deck, so its choices are random rather than strategic.
 
 ## Wireframe
-![alt text](./wireframe.png)
-The wireframe above displays the framework of the core game screen where:
-  * Users are able to view their hand and remaining time on the bottom of the screen.
-  * When time runs or when user and A.I. has chosen their cards, they will both display on the board, represented by user sprites in the above wireframe.
-  * The top left represents all the cards the user has won with in the form of tokens or sprites, whereas the top right represents the A.I.'s.
-  * The top center section contains buttons to open a modal of information along with sound settings.
 
+![Wireframe of the main game screen](./wireframe.png)
 
-## Functionality & MVPs
-In Olympus Card-Jitsu, users will be able to:
-  * Interact with different aspects and element on the page for animations.
-  * Start games with a shuffled deck.
-  * Hover over cards for more information.
-  * Play cards onto the board.
-  * Have cards be played for them, if timer runs out or player is away from keyboard.
-  * Restart game.
+The wireframe above shows the plan for the main game screen:
+  * Your hand and the remaining time are along the bottom of the screen.
+  * Once both players choose a card, or time runs out, both cards appear on the board. In the wireframe, the cards are shown as player sprites.
+  * The top left shows the tokens you've won, and the top right shows the computer's.
+  * The top center has buttons for the instructions and the sound.
 
-![alt text](./ocj_gameplay.gif)
+## Implementation Highlights
+
+The game is organized into classes: `Game` runs the rounds, `Deck` shuffles and deals, `Hand` and `Board` manage your cards, `AI` plays the computer's cards, and `Tally` tracks each player's tokens and checks for a win.
+
+The round timer counts down once per second. It ends the round early as soon as you play a card, and plays your first card for you if time runs out:
 
 ```js
-Game.prototype.countdown = function(){
+countdown(){
     this.board.board = null;
     this.ai.board = null;
     let sec = 20;
@@ -49,7 +72,7 @@ Game.prototype.countdown = function(){
             game.winRound();
             document.getElementById('timer').innerHTML="0";
             return;
-        }
+        };
         if (sec < 0){
             clearInterval(timer);
             game.moveFromHandToBoard(0);
@@ -60,54 +83,65 @@ Game.prototype.countdown = function(){
             return;
         };
     }, 1000);
-}
+};
 ```
 
+## Technologies Used
 
-In addition, this project includes:
-  * Instructions and in-game modals for instructions if player forgets.
-  * Music and sound effects.
-  
+- **Game logic and interface:** vanilla JavaScript (ES6 classes and DOM manipulation), HTML, and CSS
+- **Styling:** Sass, with the Caesar Dressing font from Google Fonts and icons from Font Awesome
+- **Build:** npm, webpack, and Babel
+- **Hosting:** GitHub Pages
 
-## Technologies, Libraries, APIs
-This project will is implemented with the following technologies:
-  * Game functions and user interactions are handled with Vanilla JavaScript through DOM Manipulation.
-  * npm for mangaging project dependencies.
-  * Webpack and babel to bundle and transpile the source JavaScript Code.
+## Running Locally
 
-## Implementation Timeline
-  * Friday Afternoon & Weekend: Built card, hand, and deck classes and objects along with corresponding DOMs for user interactivity.
-  * Monday: Implemented game logic for winning rounds, along with quality of life improvements to cards.
-  * Tuesday: Built A.I. and corresponding classes and game logic.
-  * Wednesday: Allowed for multiple rounds to be played and implemented game win logics.
-  * Thursday Morning: Deploy onto GitHub Pages along with polishing user interface and experience.
+1. Install dependencies:
+   ```sh
+   npm install
+   ```
+2. Build the JavaScript and CSS into `dist/`, or use `npm run watch` to rebuild whenever a file changes:
+   ```sh
+   npm run build
+   ```
+3. Open `index.html` in a browser.
 
+## Development Timeline
 
-## Future Implementations:
-  * Improve A.I. to be more human like and play more predicatable cards.
+  * **Friday afternoon and the weekend:** built the card, hand, and deck classes, with the page elements for playing cards.
+  * **Monday:** added the logic for winning rounds, and improved how cards look and behave.
+  * **Tuesday:** built the computer opponent.
+  * **Wednesday:** added multiple rounds and the logic for winning the game.
+  * **Thursday morning:** deployed to GitHub Pages and polished the interface.
 
-## CC Licensing:
-  * Personal link icons and modal icons provided by [Font Awesome](https://fontawesome.com/)
-  * Favicon from [Central Davidson High School logo](https://www.highschoolot.com/content/image/5258959/)
+## Future Improvements
+
+  * Make the computer opponent play strategically instead of at random.
+
+## Credits
+
+Olympus Card-Jitsu is a non-commercial student project. The images and audio below belong to their respective creators and owners.
+
+  * Personal link icons and modal icons from [Font Awesome](https://fontawesome.com/)
+  * Favicon from the [Central Davidson High School logo](https://www.highschoolot.com/content/image/5258959/)
   * Gong sound effect from [Ryan Lloyd](https://www.youtube.com/watch?v=kZ70uUp9eWo)
-  * Background music from [Leonidas Succession](https://www.youtube.com/watch?v=F63cjnBRNo8&t=26s) by [Chulainn](https://www.youtube.com/c/CharlesChulainn)
+  * Background music: [Leonidas Succession](https://www.youtube.com/watch?v=F63cjnBRNo8&t=26s) by [Chulainn](https://www.youtube.com/c/CharlesChulainn)
   * Background image from [Assassin's Creed Odyssey](https://www.ubisoft.com/en-us/game/assassins-creed/odyssey)
-  * Achilles image from [Wargod]https://www.facebook.com/legendofthecryptids/)
-  * Aphrodite image from [Miranda by Thomas Francis Dicksee](https://artvee.com/dl/miranda-3/)
-  * Ares image from [Ares Miaiphonos by GENZOMAN](https://www.deviantart.com/genzoman/art/Ares-Miaiphonos-135998313)
-  * Arion image from Georg Simon Winter von Adlersflügel
-  * Athena image from [bachzim](https://www.deviantart.com/bachzim/art/Athena-899463203)
-  * Cereberus and Theseus image from [Hades](https://www.supergiantgames.com/games/hades/)
+  * Achilles image from [Wargod](https://www.facebook.com/legendofthecryptids/)
+  * Aphrodite image: [Miranda by Thomas Francis Dicksee](https://artvee.com/dl/miranda-3/)
+  * Ares image: [Ares Miaiphonos by GENZOMAN](https://www.deviantart.com/genzoman/art/Ares-Miaiphonos-135998313)
+  * Arion image by Georg Simon Winter von Adlersflügel
+  * Athena image by [bachzim](https://www.deviantart.com/bachzim/art/Athena-899463203)
+  * Cerberus and Theseus images from [Hades](https://www.supergiantgames.com/games/hades/)
   * Chiron image from [Smite](https://www.smitegame.com/)
-  * Echo image from Echo and Narcissus by John William Waterhouse
-  * Er image from Ananke by Platone
-  * Eurydice image from Wounded Eurydice by Jean-Baptiste-Camille Corot
-  * Hades image from [Aleksandra Jędrasik](https://www.artstation.com/artwork/X9VxR)
-  * Helen image from Helon of Troy by Evelyn De Morgan
-  * Hephaestus image from [Mykhailo Kryvtsov](https://www.artstation.com/artwork/LaLmP)
-  * Hera and Porphyrion from [Rick Riordan](https://rickriordan.com/)
+  * Echo image: *Echo and Narcissus* by John William Waterhouse
+  * Er image: *Ananke* by Platone
+  * Eurydice image: *Wounded Eurydice* by Jean-Baptiste-Camille Corot
+  * Hades image by [Aleksandra Jędrasik](https://www.artstation.com/artwork/X9VxR)
+  * Helen image: *Helen of Troy* by Evelyn De Morgan
+  * Hephaestus image by [Mykhailo Kryvtsov](https://www.artstation.com/artwork/LaLmP)
+  * Hera and Porphyrion images from [Rick Riordan](https://rickriordan.com/)
   * Heracles image from [The God of High School](https://www.webtoons.com/en/action/the-god-of-high-school/list?title_no=66&page=1)
-  * Narcissus image from Narcissus by Michelangelo Merisi da Caravaggio
-  * Paris image from Paris in the Phrygian Cap by Antoni Brodowski
-  * Persephone image from [eloizz_art](https://twitter.com/eloizz_art/status/1387433361015193600?lang=ga)
-  * Triton image from The Little Mermaid by Disney
+  * Narcissus image: *Narcissus* by Michelangelo Merisi da Caravaggio
+  * Paris image: *Paris in the Phrygian Cap* by Antoni Brodowski
+  * Persephone image by [eloizz_art](https://twitter.com/eloizz_art/status/1387433361015193600?lang=ga)
+  * Triton image from *The Little Mermaid* by Disney
